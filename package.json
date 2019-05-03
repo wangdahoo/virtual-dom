@@ -1,0 +1,8 @@
+{
+  "name": "virtual-dom",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "git@github.com:wangdahoo/virtual-dom.git",
+  "author": "wangdahoo <157195705@qq.com>",
+  "license": "MIT"
+}
