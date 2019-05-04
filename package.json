@@ -1,8 +1,26 @@
 {
   "name": "virtual-dom",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "dist/virtual-dom.js",
   "repository": "git@github.com:wangdahoo/virtual-dom.git",
   "author": "wangdahoo <157195705@qq.com>",
-  "license": "MIT"
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "babel-loader": "^8.0.5",
+    "rollup": "^1.11.2",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-node-resolve": "^4.2.3"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.4.4"
+  }
 }
