@@ -54,6 +54,7 @@ module.exports = {
     'prefer-promise-reject-errors': 'off'
   },
   globals: {
-
+    describe: true,
+    it: true
   }
 }
