@@ -31,7 +31,7 @@
     "mocha": "^6.1.4",
     "prettier": "^1.17.0",
     "prettier-eslint-cli": "^4.7.1",
-    "rollup": "^1.11.2",
+    "rollup": "^1.11.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-node-resolve": "^4.2.3"

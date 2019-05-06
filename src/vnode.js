@@ -1,4 +1,4 @@
-const _ = require('./shared/utils')
+import _ from './shared/utils'
 
 const VNode = (() => {
   const _tag = Symbol('tag')
@@ -76,4 +76,4 @@ const VNode = (() => {
   return VNode
 })()
 
-module.exports = VNode
+export default VNode

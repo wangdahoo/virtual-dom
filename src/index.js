@@ -1,1 +1,5 @@
-console.log('virtual dom')
+import VNode from './vnode'
+
+export default {
+  VNode
+}

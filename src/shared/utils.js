@@ -16,7 +16,7 @@ function vnode () {
     .slice(2)
 }
 
-module.exports = {
+export default {
   isArray: Array.isArray,
   defineProperty: Object.defineProperty,
   assign: Object.assign,
