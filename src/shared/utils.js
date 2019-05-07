@@ -20,6 +20,16 @@ function find (arr, cb) {
   return found
 }
 
+function min (arr) {
+  let min = arr[0]
+
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] < min) min = arr[i]
+  }
+
+  return min
+}
+
 function vnode () {
   return Math.random()
     .toString(36)
@@ -46,6 +56,7 @@ export default {
   defineProperty: Object.defineProperty,
   assign: Object.assign,
   find,
+  min,
   vnode,
   verifyPatchType
 }

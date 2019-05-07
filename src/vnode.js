@@ -7,8 +7,8 @@ const VNode = (() => {
   const _vnode = Symbol('vnode')
 
   class VNode {
-    constructor (tagName, props = {}, children = []) {
-      if (typeof tagName !== 'string') throw new TypeError('参数错误: tagName must be a string.')
+    constructor (tagName, props = {}, children = [], key = '') {
+      if (typeof tagName !== 'string') throw new TypeError('Invalid Arguments: tagName must be a string.')
 
       if (_.isArray(props)) {
         children = props
@@ -17,11 +17,11 @@ const VNode = (() => {
 
       this[_tag] = tagName.toLowerCase()
       this[_props] = props
-      // TODO: 这里要考虑 children 数组中每个元素的类型
       this[_children] = (_.isArray(children) ? children : [children]).map(function (c) {
         return typeof c === 'string' ? new VNode('p', { textContent: c }) : c
       })
       this[_vnode] = _.vnode()
+      this.key = key
     }
 
     get tag () {
@@ -38,6 +38,11 @@ const VNode = (() => {
 
     get __vnode__ () {
       return this[_vnode]
+    }
+
+    // 获取当前节点下的子节点数
+    get getChildrenCount () {
+      return getCount(this)
     }
 
     render () {
@@ -75,5 +80,21 @@ const VNode = (() => {
 
   return VNode
 })()
+
+/**
+ * 计算子节点数
+ * @param {VNode} node
+ * @returns {Integer} count
+ */
+function getCount (node) {
+  const children = node.children
+
+  let count = 0
+  for (let i = 0; i < children.length; i++) {
+    count += getCount(children[i])
+  }
+
+  return count
+}
 
 export default VNode
