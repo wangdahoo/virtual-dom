@@ -9,7 +9,9 @@ import {
   PROP_PATCH_TYPE_DELETE
 } from './constants'
 
-function apply (tree, patches) {}
+function apply (tree, patches) {
+  // TODO:
+}
 
 /**
  * Apply patch on node

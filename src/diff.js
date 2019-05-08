@@ -85,9 +85,9 @@ function diffChildren (oldChildren, newChildren, index, patches) {
    * 类似最新编辑距离实现的 list-diff
    *
    * @description
-   * 从 a 数组中取出索引大于等于 i 的节点组成新的数组 A,
-   * 从 b 数组中取出索引大于等于 j 的节点组成新的数组 B,
-   * 求出从 A -> B 的编辑距离
+   * 从 a 数组中取出索引大于等于 i 的节点组成新的数组 a',
+   * 从 b 数组中取出索引大于等于 j 的节点组成新的数组 b',
+   * 求出从 a' -> b' 的编辑距离
    *
    * @param {Array<VNode>} a
    * @param {int} i start index of a
@@ -141,7 +141,7 @@ function diffChildren (oldChildren, newChildren, index, patches) {
     listDiff(a, i + 1, b, j + 1)
   }
 
-  return listDiff(oldChildren, 0, newChildren, 0)
+  listDiff(oldChildren, 0, newChildren, 0)
 }
 
 export default diff
