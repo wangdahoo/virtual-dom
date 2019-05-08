@@ -6,7 +6,7 @@ export default (() => {
 
   class Patch {
     constructor (type, payload = {}) {
-      if (!_.verifyPatchType(type)) throw new TypeError('参数错误: illegal type value.')
+      if (!_.verifyPatchType(type)) throw new TypeError('Invalid Arguments: illegal type value.')
 
       this[_type] = type
       this[_payload] = payload
