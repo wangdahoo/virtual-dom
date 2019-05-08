@@ -41,7 +41,7 @@ const VNode = (() => {
     }
 
     // 获取当前节点下的子节点数
-    get getChildrenCount () {
+    get getNodeCount () {
       return getCount(this)
     }
 
@@ -82,14 +82,14 @@ const VNode = (() => {
 })()
 
 /**
- * 计算子节点数
+ * 计算 VNode 树总节点数
  * @param {VNode} node
  * @returns {Integer} count
  */
 function getCount (node) {
+  let count = 1 // 自己也是一个节点
   const children = node.children
 
-  let count = 0
   for (let i = 0; i < children.length; i++) {
     count += getCount(children[i])
   }
