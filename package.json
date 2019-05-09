@@ -7,7 +7,9 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "test": "mocha --require @babel/register --exit"
+    "test": "mocha --require @babel/register --exit",
+    "test:search": "mocha --timeout 10000 test/utils/runner.js test/search.test.js --exit",
+    "lint": "lint-staged ."
   },
   "license": "MIT",
   "devDependencies": {
@@ -19,6 +21,7 @@
     "@commitlint/config-conventional": "^7.5.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
+    "chai": "^4.2.0",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.17.2",
@@ -26,15 +29,16 @@
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
     "husky": "^2.2.0",
-    "jsdom": "^15.0.0",
     "lint-staged": "^8.1.6",
     "mocha": "^6.1.4",
     "prettier": "^1.17.0",
     "prettier-eslint-cli": "^4.7.1",
+    "puppeteer": "^1.15.0",
     "rollup": "^1.11.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.3.4",
-    "rollup-plugin-node-resolve": "^4.2.3"
+    "rollup-plugin-node-resolve": "^4.2.3",
+    "slug": "^1.1.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.4.4"
