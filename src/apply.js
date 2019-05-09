@@ -1,5 +1,3 @@
-/* eslint no-unused-vars: off */
-
 import {
   PATCH_TYPE_ADD,
   PATCH_TYPE_DELETE,
@@ -7,10 +5,32 @@ import {
   PATCH_TYPE_REPOSITION,
   PROP_PATCH_TYPE_SET,
   PROP_PATCH_TYPE_DELETE
-} from './constants'
+} from './shared/constants'
 
-function apply (tree, patches) {
-  // TODO:
+function walk (element, index, patches) {
+  applyNode(element, patches[index])
+  const children = element.children
+
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i]
+    const childIndex = index + 1 + (i > 0 ? getNodeCount(children[i]) : 0)
+
+    walk(child, childIndex, patches)
+  }
+}
+
+/**
+ * Get Total Node Count of Element
+ * @param {Element} element
+ */
+function getNodeCount (element) {
+  let count = 1
+  // 这里用 children 而不是 childNodes 是为了过滤掉文本节点
+  const children = element.children
+  for (let i = 0; i < children.length; i++) {
+    count += getNodeCount(children[i])
+  }
+  return count
 }
 
 /**
@@ -40,7 +60,6 @@ function applyNode (element, patch) {
   }
 }
 
-// 更新节点属性
 function updateProps (element, propPatch) {
   for (let propName in propPatch) {
     const propPatchType = propPatch[propName].type
@@ -65,7 +84,6 @@ function updateProps (element, propPatch) {
   }
 }
 
-// 移动节点
 function reposition (element, moves) {
   const parent = element.parentElement
   const insertBefore = moves < 0
@@ -92,4 +110,6 @@ function reposition (element, moves) {
   }
 }
 
-export default apply
+export default function (element, patches) {
+  walk(element, 0, patches)
+}
