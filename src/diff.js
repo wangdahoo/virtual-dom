@@ -82,7 +82,7 @@ function diffChildren (oldChildren, newChildren, index, patches) {
   const deleted = []
 
   /**
-   * 类似最新编辑距离实现的 list-diff
+   * 类似编辑距离实现的 list-diff
    *
    * @description
    * 从 a 数组中取出索引大于等于 i 的节点组成新的数组 a',
