@@ -18,7 +18,7 @@ const VNode = (() => {
       this[_tag] = tagName.toLowerCase()
       this[_props] = props
       this[_children] = (_.isArray(children) ? children : [children]).map(function (c) {
-        return typeof c === 'string' ? new VNode('p', { textContent: c }) : c
+        return typeof c === 'string' ? new VNode('text', { text: c }) : c
       })
       this[_vnode] = _.vnode()
       this.key = key
@@ -41,12 +41,14 @@ const VNode = (() => {
     }
 
     // 获取当前节点下的子节点数
-    get getNodeCount () {
+    getNodeCount () {
       return getCount(this)
     }
 
     render () {
       const { tag, props, children, __vnode__ } = this
+
+      if (tag === 'text') return document.createTextNode(props.text)
 
       const element = document.createElement(tag)
 

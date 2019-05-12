@@ -131,4 +131,4 @@ typings/
 # 暂时去除 dist 目录
 dist/
 
-screenshot.png
+test/screenshot/

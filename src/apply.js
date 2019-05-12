@@ -25,8 +25,7 @@ function walk (element, index, patches) {
  */
 function getNodeCount (element) {
   let count = 1
-  // 这里用 children 而不是 childNodes 是为了过滤掉文本节点
-  const children = element.children
+  const children = element.childNodes
   for (let i = 0; i < children.length; i++) {
     count += getNodeCount(children[i])
   }

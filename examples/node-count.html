@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Virtual DOM - node count</title>
+
+  <script src="../dist/virtual-dom.js"></script>
+
+  <style>
+    .friends > li {
+      color: #3a3a3a;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script>
+    const { h } = VirtualDOM
+
+    const node = h('div', {
+      id: 'root',
+      className: 'greetings'
+    }, [
+      h('ul', {
+        className: 'friends'
+      }, [
+        h('li', {}, 'Tom'),
+        h('li', {}, [
+          h('span', { style: 'color: #DDD' }, 'Jerry')
+        ]),
+        h('li', {}, 'Spike')
+      ])
+    ])
+
+    const root = document.getElementById('root')
+    VirtualDOM.render(node, root)
+
+    // for test case
+    window.node = node
+  </script>
+</body>
+</html>
