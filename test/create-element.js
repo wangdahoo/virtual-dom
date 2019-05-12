@@ -17,22 +17,20 @@ after(() => {
   if (browser) browser.close()
 })
 
-describe('Search', () => {
-  it('search "王大虎"', async () => {
+describe('VNode', () => {
+  it('create-element', async () => {
     browser = await getBrowser()
     const page = await browser.newPage()
-    await page.goto(`https://www.baidu.com`)
-    await page.type('#kw', '王大虎', { delay: 100 })
-    await page.click('#su')
-    await page.waitFor('#container > div.head_nums_cont_outer.OP_LOG > div > div.nums > span')
+    await page.goto(`http://127.0.0.1:5000/examples/create-element`)
+    await page.waitFor('#root')
     await page.screenshot({
       path: './test/screenshot.png'
     })
 
     const innerText = await page.evaluate(sel => {
       return document.querySelector(sel).innerText
-    }, '#container > div.head_nums_cont_outer.OP_LOG > div > div.nums > span')
+    }, '#root')
 
-    expect(innerText).to.be.matches(/百度为您找到相关结果约[\d,]+个/)
+    expect(innerText).to.be.equal('Hi, Virutal DOM')
   })
 })
