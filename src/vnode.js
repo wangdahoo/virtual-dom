@@ -53,6 +53,9 @@ const VNode = (() => {
       for (let propName in props) {
         const propValue = props[propName]
         switch (propName) {
+        case 'className':
+          element.className = propValue
+          break
         case 'style':
           element.style.cssText = propValue
           break
@@ -62,6 +65,9 @@ const VNode = (() => {
           } else {
             element.setAttribute(propName, propValue)
           }
+          break
+        case 'textContent':
+          element.textContent = propValue
           break
         default:
           element.setAttribute(propName, propValue)
