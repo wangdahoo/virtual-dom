@@ -46,33 +46,39 @@ const VNode = (() => {
     }
 
     render () {
-      const { tag, props, children, __vnode__ } = this
+      const { tag, props, children } = this
 
       if (tag === 'text') return document.createTextNode(props.text)
 
       const element = document.createElement(tag)
 
       for (let propName in props) {
-        const propValue = props[propName]
-        switch (propName) {
-        case 'className':
-          element.className = propValue
-          break
-        case 'style':
-          element.style.cssText = propValue
-          break
-        case 'value':
-          if (tag === 'input' && tag === 'textarea') {
-            element.value = propValue
-          } else {
+        // TODO: 检查是否为事件绑定
+        if (propName === 'onclick') {
+          const onClick = props[propName]
+          element.onclick = onClick
+        } else {
+          const propValue = props[propName]
+          switch (propName) {
+          case 'className':
+            element.className = propValue
+            break
+          case 'style':
+            element.style.cssText = propValue
+            break
+          case 'value':
+            if (tag === 'input' && tag === 'textarea') {
+              element.value = propValue
+            } else {
+              element.setAttribute(propName, propValue)
+            }
+            break
+          case 'textContent':
+            element.textContent = propValue
+            break
+          default:
             element.setAttribute(propName, propValue)
           }
-          break
-        case 'textContent':
-          element.textContent = propValue
-          break
-        default:
-          element.setAttribute(propName, propValue)
         }
       }
 
@@ -80,7 +86,7 @@ const VNode = (() => {
         element.appendChild(child.render())
       })
 
-      element.setAttribute(`data-v-${__vnode__}`, '')
+      // element.setAttribute(`data-v-${this.__vnode__}`, '')
 
       return element
     }

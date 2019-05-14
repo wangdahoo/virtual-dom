@@ -37,9 +37,12 @@ function diff (oldNode, newNode) {
  * @param {Array<Patch>} patches
  */
 function walk (oldNode, newNode, index, patches) {
-  patches[index] = patches[index] || []
+  const propPatch = diffProps(oldNode.props, newNode.props)
+  if (propPatch !== null) {
+    patches[index] = patches[index] || []
 
-  patches[index].push(new Patch(PATCH_TYPE_PROPS, diffProps(oldNode.props, newNode.props)))
+    patches[index].push(new Patch(PATCH_TYPE_PROPS, propPatch))
+  }
 
   diffChildren(oldNode.children, newNode.children, index, patches)
 }
@@ -80,6 +83,7 @@ function diffProps (oldProps, newProps) {
 
 function diffChildren (oldChildren, newChildren, index, patches) {
   const deleted = []
+  const walked = []
 
   /**
    * 类似编辑距离实现的 list-diff
@@ -95,40 +99,59 @@ function diffChildren (oldChildren, newChildren, index, patches) {
    * @param {int} j start index of b
    */
   function listDiff (a, i, b, j) {
-    if (i === a.length - 1) {
-      // a' 为空数组
-      b.forEach(node => {
-        patches[index].push(new Patch(PATCH_TYPE_ADD, node))
-      })
+    if (i === a.length) {
+      // a' 为空数组，添加所有 b' 元素
+      const addPatches = b.slice(j).map(node => new Patch(PATCH_TYPE_ADD, node))
+
+      if (addPatches.length > 0) {
+        patches[index] = (patches[index] || []).concat(addPatches)
+      }
+
+      return
     }
 
-    if (j === b.length - 1) {
-      // b' 为空数组
-      a.forEach(node => {
-        patches[index].push(
+    if (j === b.length) {
+      // b' 为空数组，删除所有 a' 元素
+      const deletePatches = a.slice(i).map(
+        node =>
           new Patch(PATCH_TYPE_DELETE, {
             vnode: node.__vnode__
           })
-        )
-      })
+      )
+
+      if (deletePatches.length > 0) {
+        patches[index] = (patches[index] || []).concat(deletePatches)
+      }
+
+      return
     }
 
-    // 计算 a' 的第一个元素的索引
-    const aIndex = index + 1 + (i > 0 ? a[i - 1].getNodeCount() : 0)
+    // 判断 a' 的第一个元素是否被删除
+    const aPos = b.findIndex(node => node.__vnode__ === a[i].__vnode__)
 
-    // 判断 a' 的第一个元素是是否被删除
-    const aIndexNew = b.indexOf(node => node.__vnode__ === a[i].__vnode__)
+    if (aPos > -1) {
+      // 计算 a' 的第一个元素的 Patch 索引
+      const aIndex = index + 1 + (i > 0 ? a[i - 1].getNodeCount() : 0)
+      if (walked.findIndex(w => w === i) === -1) {
+        walk(a[i], b[aPos], aIndex, patches)
+        walked.push(i)
+      }
 
-    if (aIndexNew > -1) {
-      walk(a[i], b[aIndexNew], aIndex, patches)
+      const moves = aPos - i - deleted.filter(deletedIndex => deletedIndex < i).length
 
-      patches[index].push(
-        new Patch(PATCH_TYPE_REPOSITION, {
-          vnode: a[i].__vnode__,
-          moves: aIndexNew - aIndex + deleted.filter(i => i < aIndex).length
-        })
-      )
+      if (moves !== 0) {
+        patches[index] = patches[index] || []
+
+        patches[index].push(
+          new Patch(PATCH_TYPE_REPOSITION, {
+            vnode: a[i].__vnode__,
+            moves
+          })
+        )
+      }
     } else {
+      patches[index] = patches[index] || []
+
       patches[index].push(
         new Patch(PATCH_TYPE_DELETE, {
           vnode: a[i].__vnode__
@@ -136,6 +159,40 @@ function diffChildren (oldChildren, newChildren, index, patches) {
       )
 
       deleted.push(i)
+    }
+
+    // 判断 b' 的第一个元素是否为新增元素
+    const bPos = a.findIndex(node => node.__vnode__ === b[j].__vnode__)
+
+    if (bPos > -1) {
+      // 计算 b' 的第一个元素的 Patch 索引
+      const aIndex = index + 1 + (bPos > 0 ? a[bPos].getNodeCount() : 0)
+
+      if (walked.findIndex(w => w === bPos) === -1) {
+        walk(a[bPos], b[j], aIndex, patches)
+        walked.push(bPos)
+      }
+
+      const moves = j - bPos - deleted.filter(deletedIndex => deletedIndex < bPos).length
+
+      if (moves !== 0) {
+        patches[index] = patches[index] || []
+
+        patches[index].push(
+          new Patch(PATCH_TYPE_REPOSITION, {
+            vnode: a[i].__vnode__,
+            moves
+          })
+        )
+      }
+    } else {
+      patches[index] = patches[index] || []
+
+      patches[index].push(
+        new Patch(PATCH_TYPE_ADD, {
+          node: b[j]
+        })
+      )
     }
 
     listDiff(a, i + 1, b, j + 1)

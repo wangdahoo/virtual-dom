@@ -8,13 +8,18 @@ import {
 } from './shared/constants'
 
 function walk (element, index, patches) {
-  applyNode(element, patches[index])
-  const children = element.children
+  if (patches[index] && patches[index].length > 0) {
+    for (let i = 0; i < patches[index].length; i++) {
+      applyNode(element, patches[index][i])
+    }
+  }
 
+  const children = element.children
   for (let i = 0; i < children.length; i++) {
     const child = children[i]
     const childIndex = index + 1 + (i > 0 ? getNodeCount(children[i]) : 0)
 
+    console.log(childIndex)
     walk(child, childIndex, patches)
   }
 }
@@ -38,6 +43,8 @@ function getNodeCount (element) {
  * @param {Patch} patch
  */
 function applyNode (element, patch) {
+  if (!patch) return
+
   const { payload } = patch
 
   switch (patch.type) {
@@ -60,6 +67,8 @@ function applyNode (element, patch) {
 }
 
 function updateProps (element, propPatch) {
+  console.log(propPatch)
+
   for (let propName in propPatch) {
     const propPatchType = propPatch[propName].type
     const propValue = propPatch[propName].value

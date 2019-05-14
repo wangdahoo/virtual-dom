@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Virtual DOM - node count</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+
+  <style>
+    .counter {
+      width: 400px;
+      padding: 50px 0;
+      text-align: center;
+    }
+
+    .counter .btn {
+      margin: 0 10px;
+    }
+  </style>
+
+  <script src="https://unpkg.com/lodash@4.17.11/lodash.min.js"></script>
+  <script src="../dist/virtual-dom.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script>
+    const { h, diff, apply } = VirtualDOM
+
+    const input = h('input', {
+      style: 'text-align: center; margin-bottom: 20px;',
+      readonly: true,
+      value: 0,
+      className: 'form-control'
+    })
+
+    const node = h('div', {
+      id: 'root',
+      className: 'container counter'
+    }, [
+      h('div', {}, [input]),
+
+      h('button', {
+        type: 'button',
+        className: 'btn btn-primary',
+        onclick: function (e) {
+          const oldNode = _.cloneDeep(node)
+          input.props.value++
+          const patches = diff(oldNode, node)
+          console.log(patches)
+          apply(document.getElementById('root'), patches)
+        }
+      }, '+'),
+      
+      h('button', {
+        type: 'button',
+        className: 'btn btn-secondary',
+        onclick: function (e) {
+          const oldNode = _.cloneDeep(node)
+          input.props.value--
+          const patches = diff(oldNode, node)
+          console.log(patches)
+          apply(document.getElementById('root'), patches)
+        }
+      }, '-'),
+      
+      // h('button', {
+      //   type: 'button',
+      //   className: 'btn btn-primary'
+      // }, 'async +'),
+
+      // h('button', {
+      //   type: 'button',
+      //   className: 'btn btn-secondary'
+      // }, 'async -')
+    ])
+
+    const root = document.getElementById('root')
+    VirtualDOM.render(node, root)
+
+    // for test case
+    window.node = node
+  </script>
+</body>
+</html>
