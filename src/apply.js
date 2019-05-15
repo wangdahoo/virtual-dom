@@ -19,7 +19,6 @@ function walk (element, index, patches) {
     const child = children[i]
     const childIndex = index + 1 + (i > 0 ? getNodeCount(children[i]) : 0)
 
-    console.log(childIndex)
     walk(child, childIndex, patches)
   }
 }
@@ -67,8 +66,6 @@ function applyNode (element, patch) {
 }
 
 function updateProps (element, propPatch) {
-  console.log(propPatch)
-
   for (let propName in propPatch) {
     const propPatchType = propPatch[propName].type
     const propValue = propPatch[propName].value

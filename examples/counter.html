@@ -21,12 +21,52 @@
   </style>
 
   <script src="https://unpkg.com/lodash@4.17.11/lodash.min.js"></script>
+  <script src="https://unpkg.com/redux@4.0.1/dist/redux.min.js"></script>
   <script src="../dist/virtual-dom.js"></script>
 </head>
 <body>
   <div id="root"></div>
   
   <script>
+    const { createStore, applyMiddleware, compose } = Redux
+
+    function counter(state = 0, action) {
+      switch (action.type) {
+        case 'INCREMENT':
+          return state + 1
+        case 'DECREMENT':
+          return state - 1
+        default:
+          return state
+      }
+    }
+
+    function warn(error) {
+      throw error // To let the caller handle the rejection
+    }
+
+    const promise = () => next => action => (
+      typeof action.then === 'function'
+        ? Promise.resolve(action).then(next, warn)
+        : next(action)
+    )
+
+    let store = createStore(counter, compose(
+      applyMiddleware(promise)
+    ))
+
+    const incrementAsync = () => new Promise(resolve => {
+      setTimeout(() => {
+        resolve({ type: 'INCREMENT' })
+      }, 500)
+    })
+
+    const decrementAsync = () => new Promise(resolve => {
+      setTimeout(() => {
+        resolve({ type: 'DECREMENT' })
+      }, 500)
+    })
+
     const { h, diff, apply } = VirtualDOM
 
     const input = h('input', {
@@ -34,6 +74,14 @@
       readonly: true,
       value: 0,
       className: 'form-control'
+    })
+
+    store.subscribe(() => {
+      const oldNode = _.cloneDeep(node)
+      input.props.value = store.getState()
+      const patches = diff(oldNode, node)
+      console.log('patches: ', patches)
+      apply(document.getElementById('root'), patches)
     })
 
     const node = h('div', {
@@ -46,11 +94,7 @@
         type: 'button',
         className: 'btn btn-primary',
         onclick: function (e) {
-          const oldNode = _.cloneDeep(node)
-          input.props.value++
-          const patches = diff(oldNode, node)
-          console.log(patches)
-          apply(document.getElementById('root'), patches)
+          store.dispatch({ type: 'INCREMENT' })
         }
       }, '+'),
       
@@ -58,23 +102,25 @@
         type: 'button',
         className: 'btn btn-secondary',
         onclick: function (e) {
-          const oldNode = _.cloneDeep(node)
-          input.props.value--
-          const patches = diff(oldNode, node)
-          console.log(patches)
-          apply(document.getElementById('root'), patches)
+          store.dispatch({ type: 'DECREMENT' })
         }
       }, '-'),
       
-      // h('button', {
-      //   type: 'button',
-      //   className: 'btn btn-primary'
-      // }, 'async +'),
+      h('button', {
+        type: 'button',
+        className: 'btn btn-primary',
+        onclick: function (e) {
+          store.dispatch(incrementAsync())
+        }
+      }, 'async +'),
 
-      // h('button', {
-      //   type: 'button',
-      //   className: 'btn btn-secondary'
-      // }, 'async -')
+      h('button', {
+        type: 'button',
+        className: 'btn btn-secondary',
+        onclick: function (e) {
+          store.dispatch(decrementAsync())
+        }
+      }, 'async -')
     ])
 
     const root = document.getElementById('root')
