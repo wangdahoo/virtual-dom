@@ -83,6 +83,7 @@ function diffProps (oldProps, newProps) {
 
 function diffChildren (oldChildren, newChildren, index, patches) {
   const deleted = []
+  const added = []
   const walked = []
 
   /**
@@ -126,6 +127,14 @@ function diffChildren (oldChildren, newChildren, index, patches) {
       return
     }
 
+    // 移动位数 = j - i - 删除的元素中索引小于 i 的个数 + 新增的元素中索引小于 j 的个数
+    // i: 元素在 a' 中的索引 j: 元素在 b' 中的索引
+    const getMoves = (i, j) =>
+      j -
+      i -
+      deleted.filter(deletedIndex => deletedIndex < i).length +
+      added.filter(addedIndex => addedIndex < j).length
+
     // 判断 a' 的第一个元素是否被删除
     const aPos = b.findIndex(node => node.__vnode__ === a[i].__vnode__)
 
@@ -137,7 +146,7 @@ function diffChildren (oldChildren, newChildren, index, patches) {
         walked.push(i)
       }
 
-      const moves = aPos - i - deleted.filter(deletedIndex => deletedIndex < i).length
+      const moves = getMoves(i, aPos)
 
       if (moves !== 0) {
         patches[index] = patches[index] || []
@@ -173,7 +182,7 @@ function diffChildren (oldChildren, newChildren, index, patches) {
         walked.push(bPos)
       }
 
-      const moves = j - bPos - deleted.filter(deletedIndex => deletedIndex < bPos).length
+      const moves = getMoves(bPos, j)
 
       if (moves !== 0) {
         patches[index] = patches[index] || []
@@ -193,6 +202,8 @@ function diffChildren (oldChildren, newChildren, index, patches) {
           node: b[j]
         })
       )
+
+      added.push(j)
     }
 
     listDiff(a, i + 1, b, j + 1)
